@@ -139,7 +139,7 @@ function ThemeToggle() {
   );
 }
 
-function Navbar() {
+export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"EN" | "BN">("EN");
 
@@ -602,7 +602,7 @@ function CtaSection() {
   );
 }
 
-function Footer() {
+export function Footer() {
   const [subscribed, setSubscribed] = useState(false);
 
   function handleSubscribe(event: FormEvent<HTMLFormElement>) {
@@ -665,7 +665,7 @@ function Footer() {
   );
 }
 
-function QuickContact() {
+export function QuickContact() {
   if (!contactPhoneHref) return null;
 
   return (

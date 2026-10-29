@@ -211,6 +211,8 @@ export const messages = {
     tripCtaLoading: "Checking your session",
     sessionError: "We couldn't check your sign-in status.",
     sessionRetry: "Check again",
+    notFoundTitle: "Destination not found",
+    notFoundDescription: "This destination may have been removed or is no longer published.",
   },
   common: {
     loading: "Loading…",

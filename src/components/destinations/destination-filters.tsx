@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DestinationCategory, DestinationListParams } from "@/lib/api/destinations";
 import { messages } from "@/messages/en";
 
 const difficulties = ["EASY", "MODERATE", "HARD"] as const;
 const sortValues = ["newest", "rating", "cost_asc", "cost_desc"] as const;
-
-type Difficulty = (typeof difficulties)[number];
-type SortValue = (typeof sortValues)[number];
 
 type DestinationFiltersProps = {
   categories: DestinationCategory[];
@@ -91,7 +88,24 @@ function makeFilterHref(
 
 export function DestinationFilters({ categories, filters }: DestinationFiltersProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const activeFilters: { key: "search" | "category" | "difficulty" | "sort"; label: string }[] = [];
+
+  function closeSheet() {
+    if (dialogRef.current?.open) dialogRef.current.close();
+    setSheetOpen(false);
+  }
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (sheetOpen && !dialog.open) {
+      dialog.showModal();
+      closeButtonRef.current?.focus();
+    }
+    if (!sheetOpen && dialog.open) dialog.close();
+  }, [sheetOpen]);
 
   if (filters.search) {
     activeFilters.push({ key: "search", label: filters.search });
@@ -106,7 +120,7 @@ export function DestinationFilters({ categories, filters }: DestinationFiltersPr
   if (filters.difficulty) {
     activeFilters.push({
       key: "difficulty",
-      label: messages.home.difficulty[filters.difficulty as Difficulty],
+      label: messages.home.difficulty[filters.difficulty],
     });
   }
   if (filters.sort) {
@@ -141,35 +155,41 @@ export function DestinationFilters({ categories, filters }: DestinationFiltersPr
           {messages.destinationsPage.filtersButton}
           {activeFilters.length > 0 && <span className="filter-count">{activeFilters.length}</span>}
         </button>
-        {sheetOpen && (
-          <div className="destination-filter-overlay">
-            <button
-              type="button"
-              className="destination-filter-backdrop"
-              aria-label={messages.destinationsPage.closeFilters}
-              onClick={() => setSheetOpen(false)}
-            />
-            <section
-              className="destination-filter-sheet"
-              id="destination-filter-sheet"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="destination-filter-title"
-            >
-              <div className="destination-filter-sheet-heading">
-                <h2 id="destination-filter-title">{messages.destinationsPage.filtersButton}</h2>
-                <button
-                  type="button"
-                  className="button button-outline"
-                  onClick={() => setSheetOpen(false)}
-                >
-                  {messages.destinationsPage.closeFilters}
-                </button>
-              </div>
-              <FilterFields categories={categories} filters={filters} idPrefix="mobile-filter" />
-            </section>
-          </div>
-        )}
+        <dialog
+          className="destination-filter-overlay"
+          id="destination-filter-sheet"
+          ref={dialogRef}
+          aria-labelledby="destination-filter-title"
+          onClose={() => setSheetOpen(false)}
+          onCancel={(event) => {
+            event.preventDefault();
+            closeSheet();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              closeSheet();
+            }
+          }}
+          onClick={(event) => {
+            if (event.target === dialogRef.current) closeSheet();
+          }}
+        >
+          <section className="destination-filter-sheet">
+            <div className="destination-filter-sheet-heading">
+              <h2 id="destination-filter-title">{messages.destinationsPage.filtersButton}</h2>
+              <button
+                ref={closeButtonRef}
+                type="button"
+                className="button button-outline"
+                onClick={closeSheet}
+              >
+                {messages.destinationsPage.closeFilters}
+              </button>
+            </div>
+            <FilterFields categories={categories} filters={filters} idPrefix="mobile-filter" />
+          </section>
+        </dialog>
       </div>
 
       {activeFilters.length > 0 && (

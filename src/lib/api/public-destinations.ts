@@ -1,11 +1,17 @@
 import "server-only";
 
+import { ApiError } from "@/lib/api/client";
 import { getDestinationBySlug, listDestinations } from "@/lib/api/destinations";
 import { listCategories } from "@/lib/api/categories";
 
 export async function getCachedDestination(slug: string) {
   "use cache";
-  return getDestinationBySlug(slug);
+  try {
+    return await getDestinationBySlug(slug);
+  } catch (error) {
+    if (error instanceof ApiError && error.isNotFound) return null;
+    throw error;
+  }
 }
 
 export async function getCachedCategories() {
