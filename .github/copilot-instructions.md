@@ -1,5 +1,7 @@
 # Jajabor Trekkers Frontend — Rules
 
+See [docs/DESIGN_SYSTEM.md](../docs/DESIGN_SYSTEM.md) for the current design tokens and UI rules.
+
 ## Stack
 Next.js (App Router), TypeScript (strict), Tailwind CSS, shadcn/ui, TanStack Query, TanStack Form, Zod, Better Auth client.
 

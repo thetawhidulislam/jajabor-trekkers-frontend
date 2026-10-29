@@ -76,7 +76,7 @@ async function request<T>(
     response = await fetch(resolveUrl(path, options.query), {
       method,
       headers,
-      credentials: "include",
+      credentials: typeof window === "undefined" ? "omit" : "include",
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
       signal: options.signal,
     });

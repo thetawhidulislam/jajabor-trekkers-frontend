@@ -1,2 +1,3 @@
-// TODO: Better Auth client (same-origin /api/auth)
-export {};
+import { createAuthClient } from "better-auth/react";
+
+export const authClient = createAuthClient();
