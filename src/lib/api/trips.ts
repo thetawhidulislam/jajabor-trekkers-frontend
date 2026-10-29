@@ -25,6 +25,7 @@ export type Trip = {
   id: string;
   title: string;
   status: TripStatus;
+  destinationId?: string | null;
   startDate: string | null;
   endDate: string | null;
   budget: number | null;

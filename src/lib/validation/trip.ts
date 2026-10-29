@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { messages } from "@/messages/en";
 
-function dhakaDateInputValue() {
+export function todayDhakaDateInputValue() {
   const parts = new Intl.DateTimeFormat("en", {
     timeZone: "Asia/Dhaka",
     year: "numeric",
@@ -19,39 +19,55 @@ function isCalendarDate(value: string) {
   return !Number.isNaN(date.valueOf()) && date.toISOString().slice(0, 10) === value;
 }
 
-export const tripFormSchema = z
-  .object({
-    title: z.string().min(1, messages.tripForm.titleRequired).max(160, messages.tripForm.titleTooLong),
-    destinationId: z.string(),
-    startDate: z.string().refine(isCalendarDate, messages.tripForm.dateRequired),
-    endDate: z.string().refine(isCalendarDate, messages.tripForm.dateRequired),
-    budget: z
-      .number()
-      .finite(messages.tripForm.budgetInvalid)
-      .min(0, messages.tripForm.budgetMinimum)
-      .optional(),
-    notes: z.string().max(4000, messages.tripForm.notesTooLong),
-  })
-  .superRefine((trip, context) => {
-    if (isCalendarDate(trip.startDate) && trip.startDate < dhakaDateInputValue()) {
+const tripFieldsSchema = z.object({
+  title: z.string().min(1, messages.tripForm.titleRequired).max(160, messages.tripForm.titleTooLong),
+  destinationId: z.string(),
+  startDate: z.string().refine(isCalendarDate, messages.tripForm.dateRequired),
+  endDate: z.string().refine(isCalendarDate, messages.tripForm.dateRequired),
+  budget: z
+    .number()
+    .finite(messages.tripForm.budgetInvalid)
+    .min(0, messages.tripForm.budgetMinimum)
+    .optional(),
+  notes: z.string().max(4000, messages.tripForm.notesTooLong),
+});
+
+function validateDateOrder(
+  trip: z.infer<typeof tripFieldsSchema>,
+  context: z.RefinementCtx,
+  requireFutureStart: boolean,
+) {
+  if (
+    requireFutureStart &&
+    isCalendarDate(trip.startDate) &&
+    trip.startDate < todayDhakaDateInputValue()
+  ) {
       context.addIssue({
         code: "custom",
         path: ["startDate"],
         message: messages.tripForm.startDateTodayOrLater,
       });
-    }
+  }
 
-    if (
-      isCalendarDate(trip.startDate) &&
-      isCalendarDate(trip.endDate) &&
-      trip.endDate < trip.startDate
-    ) {
-      context.addIssue({
-        code: "custom",
-        path: ["endDate"],
-        message: messages.tripForm.endDateAfterStart,
-      });
-    }
-  });
+  if (
+    isCalendarDate(trip.startDate) &&
+    isCalendarDate(trip.endDate) &&
+    trip.endDate < trip.startDate
+  ) {
+    context.addIssue({
+      code: "custom",
+      path: ["endDate"],
+      message: messages.tripForm.endDateAfterStart,
+    });
+  }
+}
+
+export const tripFormSchema = tripFieldsSchema.superRefine((trip, context) =>
+  validateDateOrder(trip, context, true),
+);
+
+export const tripEditSchema = tripFieldsSchema.superRefine((trip, context) =>
+  validateDateOrder(trip, context, false),
+);
 
 export type TripFormValues = z.infer<typeof tripFormSchema>;
