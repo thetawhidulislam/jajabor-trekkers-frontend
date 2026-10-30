@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "api:types": "openapi-typescript http://localhost:5000/api/docs.json -o src/types/api.d.ts",
+    "check:money": "node --experimental-strip-types scripts/check-money.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

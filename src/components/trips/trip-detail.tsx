@@ -64,7 +64,7 @@ export function TripTabs({ tripId, current }: { tripId: string; current: TripSec
           className={tab.key === current ? "is-current" : undefined}
         >
           {tab.label}
-          {(tab.key === "expenses" || tab.key === "members") && (
+          {tab.key === "members" && (
             <span className="trip-coming-badge">{messages.tripsPage.comingNext}</span>
           )}
         </Link>

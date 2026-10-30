@@ -6,7 +6,8 @@
 | /destinations | public (server fetch) | GET /api/v1/destinations, /categories |
 | /destinations/[slug] | public (server fetch) | GET /destinations/:slug, /destinations/:slug/reviews |
 | /trips, /trips/new | logged in | /trips |
-| /trips/[tripId] (+ itinerary, packing, expenses, members) | trip member | /trips/:id, /itinerary, /packing, /expenses, /balances, /settlements, /members |
+| /trips/[tripId] (+ itinerary, packing, members) | trip member | /trips/:id, /itinerary, /packing, /members |
+| /trips/[tripId]/expenses | trip member | /trips/:tripId/expenses, /balances, /settlements |
 | /invitations | logged in | /trips/invitations |
 | /profile | logged in | /users/me |
 | /admin/** | ADMIN only | /admin/* |

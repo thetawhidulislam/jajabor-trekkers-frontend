@@ -1,14 +1,20 @@
 import { Suspense } from "react";
-import { TripComingSoonRoute, TripRouteFallback } from "@/components/trips/trip-coming-soon";
+import { ExpensesWorkspace } from "@/components/expenses/expenses-workspace";
+import { TripRouteFallback } from "@/components/trips/trip-coming-soon";
 
-export default function ExpensesPage({
+async function ExpensesPageContent({
   params,
 }: {
   params: Promise<{ tripId: string }>;
 }) {
+  const { tripId } = await params;
+  return <ExpensesWorkspace tripId={tripId} />;
+}
+
+export default function ExpensesPage({ params }: { params: Promise<{ tripId: string }> }) {
   return (
     <Suspense fallback={<TripRouteFallback />}>
-      <TripComingSoonRoute params={params} />
+      <ExpensesPageContent params={params} />
     </Suspense>
   );
 }

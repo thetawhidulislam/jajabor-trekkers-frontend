@@ -1,4 +1,5 @@
 import type { DestinationListParams } from "@/lib/api/destinations";
+import type { ExpenseListParams } from "@/lib/api/expenses";
 import type { TripListParams } from "@/lib/api/trips";
 
 // Every query key lives here so invalidation after mutations stays predictable.
@@ -27,5 +28,15 @@ export const queryKeys = {
   packing: {
     all: ["packing"] as const,
     list: (tripId: string) => ["packing", tripId] as const,
+  },
+  expenses: {
+    all: ["expenses"] as const,
+    lists: (tripId: string) => ["expenses", tripId, "list"] as const,
+    list: (tripId: string, params: ExpenseListParams = {}) =>
+      ["expenses", tripId, "list", params] as const,
+    balances: (tripId: string) => ["expenses", tripId, "balances"] as const,
+    settlementLists: (tripId: string) => ["expenses", tripId, "settlements"] as const,
+    settlements: (tripId: string, page = 1, limit = 10) =>
+      ["expenses", tripId, "settlements", page, limit] as const,
   },
 };
