@@ -9,6 +9,7 @@ import {
   type DestinationGalleryImage,
 } from "@/components/destinations/destination-image-gallery";
 import { DestinationPlanCta } from "@/components/destinations/destination-plan-cta";
+import { DestinationRating } from "@/components/destinations/destination-rating";
 import { DestinationRetryButton } from "@/components/destinations/destination-retry-button";
 import {
   DestinationReviews,
@@ -208,10 +209,7 @@ async function DestinationDetails({
             <DifficultyBadge difficulty={destination.difficulty} />
             <h1>{destination.name}</h1>
             {location && <p><MapPin size={17} />{location}</p>}
-            <p className="destination-detail-rating">
-              <span aria-hidden="true">★</span>
-              {messages.home.destinations.reviews(destination.reviewCount)} · {destination.avgRating.toFixed(1)}
-            </p>
+            <DestinationRating slug={slug} initialData={result} />
           </div>
         </div>
       </header>
@@ -266,7 +264,7 @@ async function DestinationDetails({
 
       <div className="shell">
         <Suspense fallback={<DestinationReviewsSkeleton />}>
-          <DestinationReviews slug={slug} searchParams={searchParams} />
+          <DestinationReviews slug={slug} searchParams={searchParams} destination={result} />
         </Suspense>
       </div>
     </>

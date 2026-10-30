@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main className="p-6">TODO: admin reviews</main>;
+import { AdminReviewModeration } from "@/components/admin/review-moderation";
+
+export default function AdminReviewsPage() {
+  return <AdminReviewModeration />;
 }

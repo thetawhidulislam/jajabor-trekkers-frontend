@@ -771,6 +771,44 @@ a { color: inherit; text-decoration: none; }
   .expense-pagination .button { padding-inline: 11px; }
 }
 
+.trip-destination-review { display: grid; gap: 16px; }
+.trip-destination-review-heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 20px; }
+.trip-destination-review-heading .eyebrow { margin: 0 0 5px; }
+.trip-destination-review-heading h2 { margin: 0; }
+.trip-destination-review-rating { display: flex; min-height: 44px; align-items: center; gap: 7px; margin: 0; color: var(--muted); font-size: 12px; }
+.trip-destination-review-rating svg { color: var(--sun-500); }
+.trip-destination-review-rating strong { color: var(--text); font-size: 16px; }
+.trip-my-review { display: grid; gap: 12px; }
+.trip-my-review-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.trip-my-review-heading time { color: var(--muted); font-size: 12px; }
+.review-stars, .destination-review-stars { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0; color: var(--sun-500); }
+.review-stars span, .destination-review-stars span { margin-inline-start: 5px; color: var(--muted); font-size: 12px; font-weight: 650; }
+.trip-my-review-comment, .destination-review-comment { margin: 0; color: var(--text); font-size: 13px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.trip-my-review .trip-form-actions { padding-top: 0; }
+.review-form { gap: 15px; }
+.review-rating-field { min-width: 0; margin: 0; border: 0; padding: 0; }
+.review-rating-field legend { margin-bottom: 7px; color: var(--text); font-size: 13px; font-weight: 750; }
+.review-rating-options { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.review-rating-option { position: relative; display: inline-flex; min-width: 48px; min-height: 48px; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); color: var(--sun-500); font-size: 12px; font-weight: 750; cursor: pointer; }
+.review-rating-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.review-rating-option:focus-within { outline: 3px solid var(--sun-500); outline-offset: 3px; }
+.review-rating-option span { color: var(--text); }
+.review-rating-text { margin-inline-start: 7px; color: var(--muted); font-size: 12px; }
+.review-form textarea { width: 100%; min-height: 108px; resize: vertical; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-raised); color: var(--text); padding: 12px 14px; }
+.review-inline-error { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.review-inline-error p, .review-eligibility-note { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.review-card-skeleton { display: grid; gap: 12px; min-height: 88px; }
+.destination-review-card-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.destination-review-card-heading time { color: var(--muted); font-size: 11px; }
+.destination-review-card .destination-review-stars { margin-top: 10px; }
+.destination-review-card .destination-review-comment { margin-top: 10px; }
+
+@media (max-width: 699px) {
+  .trip-destination-review-heading { display: grid; }
+  .review-inline-error { align-items: flex-start; flex-direction: column; }
+  .review-rating-options { gap: 6px; }
+}
+
 @media (min-width: 700px) and (max-width: 1059px) {
   .trip-card-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .trip-overview-grid { grid-template-columns: minmax(0,1fr) 190px; }

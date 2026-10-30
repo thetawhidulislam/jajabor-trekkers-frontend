@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main className="p-6">TODO: admin create destination</main>;
+import { DestinationEditor } from "@/components/admin/destination-editor";
+
+export default function NewAdminDestinationPage() {
+  return <DestinationEditor />;
 }

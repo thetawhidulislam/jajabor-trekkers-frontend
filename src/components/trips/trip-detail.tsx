@@ -11,6 +11,7 @@ import { formatDateRange, formatMoney } from "@/lib/format";
 import { messages } from "@/messages/en";
 import { TripStatusBadge } from "@/components/trips/trip-status-badge";
 import { TripForm } from "@/components/trips/trip-form";
+import { TripDestinationReview } from "@/components/reviews/trip-destination-review";
 
 type TripSection = "overview" | "itinerary" | "packing" | "expenses" | "members";
 type ActionableTripStatus = keyof typeof messages.tripsPage.statusActions;
@@ -200,6 +201,12 @@ function TripDetailContent({ tripId }: { tripId: string }) {
       <TripTabs tripId={trip.id} current="overview" />
       <div className="trip-overview-grid">
         <div className="trip-overview-main">
+          {trip.status === "COMPLETED" && trip.destination && (
+            <TripDestinationReview
+              slug={trip.destination.slug}
+              destinationName={trip.destination.name}
+            />
+          )}
           <section className="trip-detail-section trip-detail-summary">
             <h2>{messages.tripsPage.overviewTitle}</h2>
             <dl className="trip-summary-grid">

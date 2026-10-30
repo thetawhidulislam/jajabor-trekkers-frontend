@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main className="p-6">TODO: admin destinations</main>;
+import { AdminDestinationList } from "@/components/admin/destination-list";
+
+export default function AdminDestinationsPage() {
+  return <AdminDestinationList />;
 }

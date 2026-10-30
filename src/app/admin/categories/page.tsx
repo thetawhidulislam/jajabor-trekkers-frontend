@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main className="p-6">TODO: admin categories</main>;
+import { AdminCategoryManager } from "@/components/admin/category-manager";
+
+export default function AdminCategoriesPage() {
+  return <AdminCategoryManager />;
 }
