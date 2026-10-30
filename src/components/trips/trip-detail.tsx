@@ -45,7 +45,7 @@ function TripNotFound() {
   );
 }
 
-function TripTabs({ tripId, current }: { tripId: string; current: TripSection }) {
+export function TripTabs({ tripId, current }: { tripId: string; current: TripSection }) {
   const tabs: { key: TripSection; label: string; href: string }[] = [
     { key: "overview", label: messages.tripsPage.overviewTab, href: `/trips/${encodeURIComponent(tripId)}` },
     { key: "itinerary", label: messages.tripsPage.itineraryTab, href: `/trips/${encodeURIComponent(tripId)}/itinerary` },
@@ -64,7 +64,9 @@ function TripTabs({ tripId, current }: { tripId: string; current: TripSection })
           className={tab.key === current ? "is-current" : undefined}
         >
           {tab.label}
-          {tab.key !== "overview" && <span className="trip-coming-badge">{messages.tripsPage.comingNext}</span>}
+          {(tab.key === "expenses" || tab.key === "members") && (
+            <span className="trip-coming-badge">{messages.tripsPage.comingNext}</span>
+          )}
         </Link>
       ))}
     </nav>

@@ -1,5 +1,15 @@
 import { Suspense } from "react";
-import { TripComingSoonRoute, TripRouteFallback } from "@/components/trips/trip-coming-soon";
+import { ItineraryWorkspace } from "@/components/trips/itinerary-workspace";
+import { TripRouteFallback } from "@/components/trips/trip-coming-soon";
+
+async function ItineraryContent({
+  params,
+}: {
+  params: Promise<{ tripId: string }>;
+}) {
+  const { tripId } = await params;
+  return <ItineraryWorkspace tripId={tripId} />;
+}
 
 export default function ItineraryPage({
   params,
@@ -8,7 +18,7 @@ export default function ItineraryPage({
 }) {
   return (
     <Suspense fallback={<TripRouteFallback />}>
-      <TripComingSoonRoute params={params} />
+      <ItineraryContent params={params} />
     </Suspense>
   );
 }

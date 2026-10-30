@@ -20,4 +20,12 @@ export const queryKeys = {
     list: (params: TripListParams = {}) => ["trips", "list", params] as const,
     detail: (id: string) => ["trips", "detail", id] as const,
   },
+  itinerary: {
+    all: ["itinerary"] as const,
+    list: (tripId: string) => ["itinerary", tripId] as const,
+  },
+  packing: {
+    all: ["packing"] as const,
+    list: (tripId: string) => ["packing", tripId] as const,
+  },
 };
