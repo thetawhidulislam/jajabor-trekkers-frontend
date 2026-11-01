@@ -4,7 +4,7 @@ Next.js 16 (App Router) + TypeScript + Tailwind CSS + TanStack Query/Form + Zod 
 
 ## Run
 1. `npm install`
-2. Copy `.env.example` to `.env.local` (BACKEND_URL points to the backend, default http://localhost:5000)
+2. Copy `.env.example` to `.env.local` and set `BACKEND_URL` and `NEXT_PUBLIC_SITE_URL` for your environment (local defaults are provided)
 3. Start the backend, then `npm run dev` and open http://localhost:3000
 
 ## How it talks to the backend

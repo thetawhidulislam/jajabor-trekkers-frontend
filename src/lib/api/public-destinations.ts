@@ -21,6 +21,18 @@ export async function getCachedCategories() {
 
 export async function getPublishedDestinationSlugs() {
   "use cache";
-  const result = await listDestinations({ limit: 50 });
-  return result.data.map(({ slug }) => slug);
+  const firstPage = await listDestinations({ page: 1, limit: 50 });
+  const totalPages = firstPage.meta?.totalPages ?? 1;
+  const remainingPages =
+    totalPages <= 1
+      ? []
+      : await Promise.all(
+          Array.from({ length: totalPages - 1 }, (_, index) =>
+            listDestinations({ page: index + 2, limit: 50 }),
+          ),
+        );
+
+  return [...firstPage.data, ...remainingPages.flatMap(({ data }) => data)].map(
+    ({ slug }) => slug,
+  );
 }

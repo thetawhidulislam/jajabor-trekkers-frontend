@@ -5,6 +5,13 @@ export const messages = {
     tagline: "Plan Together. Explore More.",
     description:
       "Explore real destinations, plan trips with friends, split costs and share packing lists.",
+    loading: "Loading your trip workspace",
+    errorTitle: "Something went wrong",
+    errorDescription: "We couldn't load this page. Please try again.",
+    retry: "Try again",
+    notFoundTitle: "We couldn't find that page",
+    notFoundDescription: "The page may have moved or is no longer available.",
+    backHome: "Back to home",
   },
   home: {
     brandSuffix: "TREKKERS",

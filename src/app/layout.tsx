@@ -20,8 +20,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: { default: `${messages.app.name} — ${messages.app.tagline}`, template: `%s | ${messages.app.name}` },
   description: messages.app.description,
+  openGraph: {
+    type: "website",
+    siteName: messages.app.name,
+    title: `${messages.app.name} — ${messages.app.tagline}`,
+    description: messages.app.description,
+    images: [{ url: "/brand-mark.svg", alt: messages.app.name }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${messages.app.name} — ${messages.app.tagline}`,
+    description: messages.app.description,
+    images: ["/brand-mark.svg"],
+  },
   icons: {
     icon: "/icon.svg",
     apple: "/icon.svg",
