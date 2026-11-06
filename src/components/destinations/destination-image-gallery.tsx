@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { messages } from "@/messages/en";
+import { safeImageSrc } from "@/lib/images";
 
 export type DestinationGalleryImage = {
   src: string;
@@ -32,7 +33,7 @@ export function DestinationImageGallery({
   }, [activeIndex]);
 
   function imageSource(src: string) {
-    return src.includes("example.com") || failedImages.has(src) ? imageFallback : src;
+    return failedImages.has(src) ? imageFallback : safeImageSrc(src);
   }
 
   function markFailed(src: string) {
@@ -67,7 +68,11 @@ export function DestinationImageGallery({
               alt={messages.destinationsPage.galleryImageAlt(name, image.caption)}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 35vw, 420px"
-              onError={() => markFailed(image.src)}
+              onError={(event) => {
+                markFailed(image.src);
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = imageFallback;
+              }}
             />
           </button>
         ))}
@@ -126,7 +131,11 @@ export function DestinationImageGallery({
                 alt={messages.destinationsPage.galleryImageAlt(name, activeImage.caption)}
                 fill
                 sizes="90vw"
-                onError={() => markFailed(activeImage.src)}
+                onError={(event) => {
+                  markFailed(activeImage.src);
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = imageFallback;
+                }}
               />
             </div>
             {activeImage.caption && <p>{activeImage.caption}</p>}

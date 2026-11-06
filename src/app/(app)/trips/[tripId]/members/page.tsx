@@ -1,5 +1,15 @@
 import { Suspense } from "react";
-import { TripComingSoonRoute, TripRouteFallback } from "@/components/trips/trip-coming-soon";
+import { TripRouteFallback } from "@/components/trips/trip-coming-soon";
+import { TripMembersWorkspace } from "@/components/trips/trip-members-workspace";
+
+async function TripMembersContent({
+  params,
+}: {
+  params: Promise<{ tripId: string }>;
+}) {
+  const { tripId } = await params;
+  return <TripMembersWorkspace tripId={tripId} />;
+}
 
 export default function MembersPage({
   params,
@@ -8,7 +18,7 @@ export default function MembersPage({
 }) {
   return (
     <Suspense fallback={<TripRouteFallback />}>
-      <TripComingSoonRoute params={params} />
+      <TripMembersContent params={params} />
     </Suspense>
   );
 }

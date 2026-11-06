@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { ALLOWED_IMAGE_HOSTS } from "./src/lib/images";
 
 // Backend base URL, used ONLY on the server (rewrites proxy + server-side fetches).
 // Browser code never sees it: it calls same-origin /api/* and Next.js proxies it.
@@ -31,10 +32,10 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "images.unsplash.com" },
-    ],
+    remotePatterns: ALLOWED_IMAGE_HOSTS.map((hostname) => ({
+      protocol: "https" as const,
+      hostname,
+    })),
   },
   // Same-origin proxy: browser -> /api/* -> backend. Avoids CORS and cross-site cookie problems.
   async rewrites() {

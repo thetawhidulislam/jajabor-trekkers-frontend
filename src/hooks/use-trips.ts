@@ -5,7 +5,11 @@ import {
   createTrip,
   deleteTrip,
   getTrip,
+  inviteTripMember,
   listTrips,
+  listTripMembers,
+  removeTripMember,
+  respondToTripInvitation,
   updateTrip,
   updateTripStatus,
   type TripListParams,
@@ -26,6 +30,53 @@ export function useTrip(id: string) {
     queryKey: queryKeys.trips.detail(id),
     queryFn: () => getTrip(id),
     enabled: id.length > 0,
+  });
+}
+
+export function useTripMembers(tripId: string, page = 1, limit = 50) {
+  return useQuery({
+    queryKey: queryKeys.trips.members(tripId, page, limit),
+    queryFn: () => listTripMembers(tripId, page, limit),
+    enabled: tripId.length > 0,
+  });
+}
+
+function invalidateTripMembers(queryClient: ReturnType<typeof useQueryClient>, tripId: string) {
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: queryKeys.trips.all }),
+    queryClient.invalidateQueries({ queryKey: queryKeys.trips.memberLists(tripId) }),
+    queryClient.invalidateQueries({ queryKey: queryKeys.trips.detail(tripId) }),
+    queryClient.invalidateQueries({ queryKey: queryKeys.invitations.all }),
+  ]);
+}
+
+export function useInviteTripMember(tripId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (email: string) => inviteTripMember(tripId, email),
+    onSuccess: () => invalidateTripMembers(queryClient, tripId),
+  });
+}
+
+export function useRemoveTripMember(tripId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => removeTripMember(tripId, userId),
+    onSuccess: () => invalidateTripMembers(queryClient, tripId),
+  });
+}
+
+export function useRespondToTripInvitation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ tripId, action }: { tripId: string; action: "accept" | "decline" }) =>
+      respondToTripInvitation(tripId, action),
+    onSuccess: (_result, { tripId }) =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.trips.all }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.trips.detail(tripId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.invitations.all }),
+      ]),
   });
 }
 

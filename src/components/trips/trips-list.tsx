@@ -10,6 +10,7 @@ import { ApiError } from "@/lib/api/client";
 import { formatDateRange, formatMoney } from "@/lib/format";
 import { messages } from "@/messages/en";
 import { TripStatusBadge } from "@/components/trips/trip-status-badge";
+import { safeImageSrc } from "@/lib/images";
 
 const statuses = ["PLANNING", "UPCOMING", "ONGOING", "COMPLETED", "CANCELLED"] satisfies TripStatus[];
 const sorts = ["startDate_asc", "startDate_desc", "newest"] satisfies TripSort[];
@@ -163,12 +164,16 @@ function TripsListContent() {
           <article className="trip-card" key={trip.id}>
             <Link className="trip-card-cover" href={`/trips/${encodeURIComponent(trip.id)}`}>
               <Image
-                src={trip.destination?.coverImage || "/destination-fallback.svg"}
+                src={safeImageSrc(trip.destination?.coverImage)}
                 alt={trip.destination
                   ? messages.tripsPage.destinationAlt(trip.destination.name)
                   : messages.tripsPage.destinationFallbackAlt}
                 fill
                 sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 380px"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = "/destination-fallback.svg";
+                }}
               />
               <span className="trip-card-status"><TripStatusBadge status={trip.status} /></span>
             </Link>

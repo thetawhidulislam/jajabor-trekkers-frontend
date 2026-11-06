@@ -18,6 +18,7 @@ import { useAdminUnsavedChanges } from "@/components/admin/admin-shell";
 import { ImageUpload } from "@/components/admin/image-upload";
 import { adminDestinationSchema, type AdminDestinationFormValues } from "@/lib/validation/destination";
 import { messages } from "@/messages/en";
+import { safeImageSrc } from "@/lib/images";
 
 type GalleryImage = { url: string; caption: string };
 type TextFieldName = "name" | "slug" | "division" | "district" | "locationText" | "latitude" | "longitude" | "bestTimeToVisit" | "lastVerifiedAt";
@@ -363,7 +364,10 @@ function DestinationEditorForm({
           <div className="admin-upload-field">
             <h3>{messages.admin.coverImage}</h3>
             <form.Subscribe selector={(state) => state.values.coverImage}>
-              {(coverImage) => coverImage ? <Image className="admin-cover-preview" src={coverImage} alt={messages.admin.imagePreview(messages.admin.coverImage)} width={520} height={300} unoptimized /> : null}
+              {(coverImage) => coverImage ? <Image className="admin-cover-preview" src={safeImageSrc(coverImage)} alt={messages.admin.imagePreview(messages.admin.coverImage)} width={520} height={300} unoptimized onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = "/destination-fallback.svg";
+              }} /> : null}
             </form.Subscribe>
             <ImageUpload label={messages.admin.uploadCover} onUploaded={(url) => form.setFieldValue("coverImage", url)} />
           </div>
@@ -376,7 +380,17 @@ function DestinationEditorForm({
             <div className="admin-gallery-list">
               {gallery.map((image, index) => (
                 <article className="admin-gallery-item" key={`${image.url}-${index}`}>
-                  <Image src={image.url} alt={messages.destinationsPage.galleryImageAlt(form.state.values.name || messages.admin.destinationsTitle, image.caption || null)} width={140} height={100} unoptimized />
+                  <Image
+                    src={safeImageSrc(image.url)}
+                    alt={messages.destinationsPage.galleryImageAlt(form.state.values.name || messages.admin.destinationsTitle, image.caption || null)}
+                    width={140}
+                    height={100}
+                    unoptimized
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = "/destination-fallback.svg";
+                    }}
+                  />
                   <label>
                     <span>{messages.admin.imageCaption}</span>
                     <input maxLength={300} value={image.caption} onChange={(event) => updateGallery(index, { caption: event.currentTarget.value })} />

@@ -11,6 +11,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: siteUrl("/") },
     { url: siteUrl("/destinations") },
+    { url: siteUrl("/how-it-works") },
+    { url: siteUrl("/faq") },
+    { url: siteUrl("/about") },
+    { url: siteUrl("/contact") },
+    { url: siteUrl("/safety") },
+    { url: siteUrl("/terms") },
+    { url: siteUrl("/privacy") },
     ...slugs.map((slug) => ({ url: siteUrl(`/destinations/${encodeURIComponent(slug)}`) })),
   ];
 }

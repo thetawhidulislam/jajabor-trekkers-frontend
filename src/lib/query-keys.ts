@@ -25,6 +25,13 @@ export const queryKeys = {
     lists: ["trips", "list"] as const,
     list: (params: TripListParams = {}) => ["trips", "list", params] as const,
     detail: (id: string) => ["trips", "detail", id] as const,
+    memberLists: (tripId: string) => ["trips", "members", tripId] as const,
+    members: (tripId: string, page = 1, limit = 50) =>
+      ["trips", "members", tripId, page, limit] as const,
+  },
+  invitations: {
+    all: ["invitations"] as const,
+    pending: (page = 1, limit = 50) => ["invitations", "pending", page, limit] as const,
   },
   itinerary: {
     all: ["itinerary"] as const,

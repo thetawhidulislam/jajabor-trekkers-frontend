@@ -1,5 +1,5 @@
-import { TripComingSoon } from "@/components/trips/trip-coming-soon";
+import { InvitationsWorkspace } from "@/components/trips/invitations-workspace";
 
 export default function InvitationsPage() {
-  return <TripComingSoon />;
+  return <InvitationsWorkspace />;
 }

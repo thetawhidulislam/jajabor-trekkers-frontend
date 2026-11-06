@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { TripsList } from "@/components/trips/trips-list";
+import { TripSummary } from "@/components/trips/trip-summary";
 import { messages } from "@/messages/en";
 
 function TripsPageFallback() {
@@ -29,8 +29,8 @@ export default function MyTripsPage() {
           <p className="eyebrow">{messages.tripsPage.description}</p>
           <h1>{messages.tripsPage.title}</h1>
         </div>
-        <Link className="button button-primary" href="/trips/new">{messages.tripsPage.planTrip}</Link>
       </header>
+      <TripSummary />
       <Suspense fallback={<TripsPageFallback />}>
         <TripsList />
       </Suspense>

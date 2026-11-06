@@ -5,10 +5,11 @@
 | /login, /signup, /forgot-password, /reset-password, /terms, /privacy | public (noindex) | /api/auth/* |
 | /destinations | public (server fetch) | GET /api/v1/destinations, /categories |
 | /destinations/[slug] | public (server fetch) | GET /destinations/:slug, /destinations/:slug/reviews |
+| /how-it-works, /faq, /about, /contact, /safety | public | Static feature and contact information |
 | /trips, /trips/new | logged in | /trips |
 | /trips/[tripId] (+ itinerary, packing, members) | trip member | /trips/:id, /itinerary, /packing, /members |
 | /trips/[tripId]/expenses | trip member | /trips/:tripId/expenses, /balances, /settlements |
-| /invitations | logged in | /trips/invitations |
+| /invitations | logged in (placeholder UI) | GET /api/v1/trips/invitations is used for the pending-invitation summary |
 | /profile | logged in | /users/me |
 | /admin | ADMIN only (others get 404) | No aggregate endpoint; links to admin sections |
 | /admin/destinations (+ new/edit) | ADMIN only (others get 404) | `GET/POST /api/v1/admin/destinations`, `GET/PATCH/DELETE /api/v1/admin/destinations/{id}`, `PATCH /api/v1/admin/destinations/{id}/status`, `PATCH /api/v1/admin/destinations/{id}/featured`; signed direct Cloudinary uploads use `POST /api/v1/uploads/signature` |

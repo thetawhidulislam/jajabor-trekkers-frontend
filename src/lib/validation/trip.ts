@@ -70,4 +70,8 @@ export const tripEditSchema = tripFieldsSchema.superRefine((trip, context) =>
   validateDateOrder(trip, context, false),
 );
 
+export const tripMemberInviteSchema = z.object({
+  email: z.string().trim().pipe(z.email(messages.tripsPage.members.emailInvalid)),
+});
+
 export type TripFormValues = z.infer<typeof tripFormSchema>;

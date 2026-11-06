@@ -22,6 +22,7 @@ import {
   getPublishedDestinationSlugs,
 } from "@/lib/api/public-destinations";
 import { formatMoney } from "@/lib/format";
+import { safeImageSrc } from "@/lib/images";
 import { messages } from "@/messages/en";
 
 type RouteParams = Promise<{ slug: string }>;
@@ -49,10 +50,8 @@ export async function generateMetadata({ params }: { params: RouteParams }): Pro
 
   const { data: destination } = result;
   const description = destination.description?.trim() || messages.destinationsPage.listDescription;
-  const coverImage =
-    destination.coverImage.trim() && !destination.coverImage.includes("example.com")
-      ? destination.coverImage
-      : undefined;
+  const safeCoverImage = safeImageSrc(destination.coverImage);
+  const coverImage = safeCoverImage === "/destination-fallback.svg" ? undefined : safeCoverImage;
   return {
     title: destination.name,
     description,
@@ -176,7 +175,7 @@ async function DestinationDetails({
   const location = [destination.district, destination.division].filter(Boolean).join(", ");
   const images: DestinationGalleryImage[] = [
     {
-      src: destination.coverImage.trim() ? destination.coverImage : "/destination-fallback.svg",
+      src: safeImageSrc(destination.coverImage),
       caption: null,
     },
     ...(destination.images ?? []).map((image) => ({
@@ -190,11 +189,7 @@ async function DestinationDetails({
       <header className="destination-detail-hero">
         <Image
           className="destination-detail-cover"
-          src={
-            destination.coverImage.trim() && !destination.coverImage.includes("example.com")
-              ? destination.coverImage
-              : "/destination-fallback.svg"
-          }
+          src={safeImageSrc(destination.coverImage)}
           alt={messages.home.destinations.imageAlt(destination.name)}
           fill
           priority

@@ -10,7 +10,9 @@ import {
   ArrowUpRight,
   Backpack,
   CalendarDays,
+  Camera,
   Check,
+  CirclePlay,
   ChevronDown,
   Compass,
   Footprints,
@@ -29,13 +31,14 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { useEffect, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useDestinations } from "@/hooks/use-destinations";
 import { authClient } from "@/lib/auth/auth-client";
 import { ApiError } from "@/lib/api/client";
 import { UserMenu } from "@/components/layout/user-menu";
 import type { DestinationCard } from "@/lib/api/destinations";
 import { formatMoney } from "@/lib/format";
+import { safeImageSrc } from "@/lib/images";
 import { messages } from "@/messages/en";
 
 const photos = {
@@ -52,14 +55,25 @@ const destinationFallback = "/destination-fallback.svg";
 const shopUrl = process.env.NEXT_PUBLIC_SHOP_URL?.trim();
 const contactPhone = process.env.NEXT_PUBLIC_CONTACT_PHONE?.trim();
 const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+const contactWhatsApp = process.env.NEXT_PUBLIC_CONTACT_WHATSAPP?.trim();
 const contactAddress = process.env.NEXT_PUBLIC_CONTACT_ADDRESS?.trim();
+const socialInstagram = process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM?.trim();
+const socialFacebook = process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK?.trim();
+const socialYoutube = process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE?.trim();
 const contactPhoneHref = contactPhone
   ? `tel:${contactPhone.replace(/[^\d+]/g, "")}`
+  : undefined;
+const contactWhatsAppNumber = contactWhatsApp?.replace(/\D/g, "");
+const contactWhatsAppHref = contactWhatsAppNumber
+  ? `https://wa.me/${contactWhatsAppNumber}`
   : undefined;
 
 const navLinks = [
   { href: "/destinations", label: messages.home.nav.destinations },
-  ...(shopUrl ? [{ href: shopUrl, label: messages.home.nav.gear, external: true }] : []),
+  { href: "/how-it-works", label: messages.home.nav.howItWorks },
+  { href: "/faq", label: messages.home.nav.faq },
+  { href: "/about", label: messages.home.nav.about },
+  { href: "/contact", label: messages.home.nav.contact },
 ];
 
 const gearIcons = [Backpack, Footprints, TentTree, Shirt, Compass];
@@ -255,12 +269,16 @@ function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <Image
-        src={photos.hero}
+        src={safeImageSrc(photos.hero)}
         alt={messages.home.hero.imageAlt}
         fill
         priority
         sizes="100vw"
         className="hero-image"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = destinationFallback;
+        }}
       />
       <div className="hero-overlay" />
       <div className="hero-contours" />
@@ -364,9 +382,7 @@ export function DifficultyBadge({ difficulty }: { difficulty: DestinationCard["d
 export function DestinationCard({ destination, index }: { destination: DestinationCard; index: number }) {
   const reduceMotion = useReducedMotion();
   const [imageSrc, setImageSrc] = useState(
-    destination.coverImage && !destination.coverImage.includes("example.com")
-      ? destination.coverImage
-      : destinationFallback,
+    safeImageSrc(destination.coverImage),
   );
   const price = formatMoney(destination.estimatedCostMin);
 
@@ -577,7 +593,16 @@ function CommunitySection() {
         <div className="community-grid">
           {galleryImages.map((photo, index) => (
             <div className={`gallery-photo ${photo.className}`} key={photo.image}>
-              <Image src={photo.image} alt={photo.alt} fill sizes="(max-width: 640px) 50vw, 25vw" />
+              <Image
+                src={safeImageSrc(photo.image)}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 640px) 50vw, 25vw"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = destinationFallback;
+                }}
+              />
               <span className="gallery-index">0{index + 1}</span>
             </div>
           ))}
@@ -606,32 +631,29 @@ function CtaSection() {
 }
 
 export function Footer() {
-  const [subscribed, setSubscribed] = useState(false);
-
-  function handleSubscribe(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubscribed(true);
-  }
-
   return (
     <footer className="site-footer">
-      <div className={`shell footer-main${contactPhone || contactEmail || contactAddress ? "" : " footer-main-no-contact"}`}>
+      <div className={`shell footer-main${contactPhone || contactEmail || contactWhatsApp || contactAddress ? "" : " footer-main-no-contact"}`}>
         <div className="footer-brand-column">
           <Brand footer />
           <p>{messages.home.footer.about}</p>
-          <div className="footer-socials" aria-label={messages.home.footer.socialLabel}>
-            <a href="https://www.instagram.com/" aria-label={messages.home.footer.instagram} target="_blank" rel="noreferrer">ig</a>
-            <a href="https://www.facebook.com/" aria-label={messages.home.footer.facebook} target="_blank" rel="noreferrer">f</a>
-            <a href="https://www.youtube.com/" aria-label={messages.home.footer.youtube} target="_blank" rel="noreferrer">▶</a>
-          </div>
+          {(socialInstagram || socialFacebook || socialYoutube) && (
+            <div className="footer-socials" aria-label={messages.home.footer.socialLabel}>
+              {socialInstagram && <a href={socialInstagram} aria-label={messages.home.footer.instagram} target="_blank" rel="noreferrer"><Camera size={17} /></a>}
+              {socialFacebook && <a href={socialFacebook} aria-label={messages.home.footer.facebook} target="_blank" rel="noreferrer"><UsersRound size={17} /></a>}
+              {socialYoutube && <a href={socialYoutube} aria-label={messages.home.footer.youtube} target="_blank" rel="noreferrer"><CirclePlay size={17} /></a>}
+            </div>
+          )}
         </div>
         <div className="footer-link-column">
           <h3>{messages.home.footer.explore}</h3>
           <Link href="/destinations">{messages.home.nav.destinations}</Link>
-          <Link href="/trips/new">{messages.home.nav.plan}</Link>
-          {shopUrl && <a href={shopUrl} target="_blank" rel="noreferrer">{messages.home.nav.gear}</a>}
+          <Link href="/how-it-works">{messages.home.nav.howItWorks}</Link>
+          <Link href="/faq">{messages.home.nav.faq}</Link>
+          <Link href="/about">{messages.home.nav.about}</Link>
+          <Link href="/contact">{messages.home.nav.contact}</Link>
         </div>
-        {(contactPhone || contactEmail || contactAddress) && (
+        {(contactPhone || contactEmail || contactWhatsApp || contactAddress) && (
           <div className="footer-contact">
             <h3>{messages.home.footer.contact}</h3>
             {contactAddress && <p><MapPin size={16} />{contactAddress}</p>}
@@ -645,24 +667,22 @@ export function Footer() {
                 <Mail size={15} />{messages.home.footer.email}: {contactEmail}
               </a>
             )}
+            {contactWhatsApp && contactWhatsAppHref && (
+              <a href={contactWhatsAppHref} className="footer-contact-link" target="_blank" rel="noreferrer">
+                {messages.home.footer.whatsapp}: {contactWhatsApp}
+              </a>
+            )}
           </div>
         )}
-        <div className="footer-newsletter">
-          <h3>{messages.home.footer.newsletter}</h3>
-          <p>{messages.home.footer.newsletterDescription}</p>
-          <form className="newsletter-form" onSubmit={handleSubscribe}>
-            <label className="sr-only" htmlFor="newsletter-email">{messages.home.footer.emailLabel}</label>
-            <input id="newsletter-email" type="email" placeholder={messages.home.footer.emailPlaceholder} required disabled={subscribed} />
-            <button type="submit" aria-label={messages.home.footer.subscribe} disabled={subscribed}>
-              {subscribed ? <Check size={18} /> : <ArrowRight size={18} />}
-            </button>
-          </form>
-          {subscribed && <p className="newsletter-success" role="status">{messages.home.footer.newsletterSuccess}</p>}
-        </div>
       </div>
       <div className="footer-bottom shell">
         <span>{messages.home.footer.copyright}</span>
         <span>{messages.home.footer.madeFor}<Trees size={15} /></span>
+        <div className="footer-legal-links">
+          <Link href="/terms">{messages.home.footer.terms}</Link>
+          <Link href="/privacy">{messages.home.footer.privacy}</Link>
+          <Link href="/safety">{messages.home.footer.safety}</Link>
+        </div>
       </div>
     </footer>
   );

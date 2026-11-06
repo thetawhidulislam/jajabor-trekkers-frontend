@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { messages } from "@/messages/en";
 import { useToast } from "@/providers/toast-provider";
+import { safeImageSrc } from "@/lib/images";
+import { usePendingInvitations } from "@/hooks/use-invitations";
 
 function initials(name: string) {
   return name
@@ -28,6 +30,8 @@ export function UserMenu({ mobile = false, onNavigate }: { mobile?: boolean; onN
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const user = session?.user;
+  const invitationsQuery = usePendingInvitations(Boolean(user));
+  const invitationCount = invitationsQuery.data?.meta?.total ?? invitationsQuery.data?.data.length ?? 0;
   const menuClass = mobile ? "user-menu user-menu-mobile" : "user-menu user-menu-desktop";
 
   if (isPending) {
@@ -95,7 +99,17 @@ export function UserMenu({ mobile = false, onNavigate }: { mobile?: boolean; onN
         >
           <span className="user-avatar">
             {user.image ? (
-              <Image src={user.image} alt="" width={40} height={40} unoptimized />
+              <Image
+                src={safeImageSrc(user.image)}
+                alt=""
+                width={40}
+                height={40}
+                unoptimized
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = "/destination-fallback.svg";
+                }}
+              />
             ) : (
               initials(user.name)
             )}
@@ -113,7 +127,12 @@ export function UserMenu({ mobile = false, onNavigate }: { mobile?: boolean; onN
             {messages.home.userMenu.myTrips}
           </Link>
           <Link role="menuitem" href="/invitations" onClick={() => { setOpen(false); onNavigate?.(); }}>
-            {messages.home.userMenu.invitations}
+            <span>{messages.home.userMenu.invitations}</span>
+            {invitationCount > 0 && (
+              <span className="user-menu-count" aria-label={messages.home.userMenu.invitationCount(invitationCount)}>
+                {invitationCount > 99 ? "99+" : invitationCount}
+              </span>
+            )}
           </Link>
           <Link role="menuitem" href="/profile" onClick={() => { setOpen(false); onNavigate?.(); }}>
             {messages.home.userMenu.profile}

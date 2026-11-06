@@ -10,6 +10,7 @@ import type { TripStatus } from "@/lib/api/trips";
 import { formatDateRange, formatMoney } from "@/lib/format";
 import { messages } from "@/messages/en";
 import { TripStatusBadge } from "@/components/trips/trip-status-badge";
+import { safeImageSrc } from "@/lib/images";
 import { TripForm } from "@/components/trips/trip-form";
 import { TripDestinationReview } from "@/components/reviews/trip-destination-review";
 
@@ -224,10 +225,14 @@ function TripDetailContent({ tripId }: { tripId: string }) {
               <Link className="trip-destination-summary" href={`/destinations/${encodeURIComponent(trip.destination.slug)}`}>
                 <span className="trip-destination-image">
                   <Image
-                    src={trip.destination.coverImage || "/destination-fallback.svg"}
+                    src={safeImageSrc(trip.destination.coverImage)}
                     alt={messages.tripsPage.destinationAlt(trip.destination.name)}
                     fill
                     sizes="(max-width: 700px) 100vw, 360px"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = "/destination-fallback.svg";
+                    }}
                   />
                 </span>
                 <span className="trip-destination-name">{trip.destination.name}</span>
