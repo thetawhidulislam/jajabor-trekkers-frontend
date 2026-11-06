@@ -1,3 +1,5 @@
-export default function Page() {
-  return <main className="p-6">TODO: profile</main>;
+import { ProfileForm } from "@/components/auth/profile-form";
+
+export default function ProfilePage() {
+  return <ProfileForm />;
 }

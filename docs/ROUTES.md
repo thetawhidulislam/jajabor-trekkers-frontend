@@ -2,7 +2,7 @@
 
 | Route | Access | Backend |
 |---|---|---|
-| /login, /signup | public | /api/auth/* |
+| /login, /signup, /forgot-password, /reset-password, /terms, /privacy | public (noindex) | /api/auth/* |
 | /destinations | public (server fetch) | GET /api/v1/destinations, /categories |
 | /destinations/[slug] | public (server fetch) | GET /destinations/:slug, /destinations/:slug/reviews |
 | /trips, /trips/new | logged in | /trips |

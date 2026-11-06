@@ -31,7 +31,9 @@ import {
 } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import { useDestinations } from "@/hooks/use-destinations";
+import { authClient } from "@/lib/auth/auth-client";
 import { ApiError } from "@/lib/api/client";
+import { UserMenu } from "@/components/layout/user-menu";
 import type { DestinationCard } from "@/lib/api/destinations";
 import { formatMoney } from "@/lib/format";
 import { messages } from "@/messages/en";
@@ -57,7 +59,6 @@ const contactPhoneHref = contactPhone
 
 const navLinks = [
   { href: "/destinations", label: messages.home.nav.destinations },
-  { href: "/trips/new", label: messages.home.nav.plan },
   ...(shopUrl ? [{ href: shopUrl, label: messages.home.nav.gear, external: true }] : []),
 ];
 
@@ -142,6 +143,7 @@ function ThemeToggle() {
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState<"EN" | "BN">("EN");
+  const { data: session } = authClient.useSession();
 
   function closeMenu() {
     setMenuOpen(false);
@@ -174,10 +176,7 @@ export function Navbar() {
             </button>
             <ThemeToggle />
           </div>
-          <Link href="/trips/new" className="button button-primary nav-mobile-cta" onClick={closeMenu}>
-            {messages.home.nav.plan}
-            <ArrowUpRight size={17} />
-          </Link>
+          <UserMenu mobile onNavigate={closeMenu} />
         </div>
         <div className="nav-tools">
           <button
@@ -189,7 +188,11 @@ export function Navbar() {
             {language === "EN" ? "বাংলা" : "English"}
           </button>
           <ThemeToggle />
-          <Link href="/trips/new" className="button button-primary nav-book">
+          <UserMenu />
+          <Link
+            href={session?.user ? "/trips/new" : "/signup?next=%2Ftrips%2Fnew"}
+            className="button button-primary nav-book"
+          >
             {messages.home.nav.plan}
             <ArrowUpRight size={17} />
           </Link>
